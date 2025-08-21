@@ -74,7 +74,7 @@ jooq {
                 logging = org.jooq.meta.jaxb.Logging.WARN
                 jdbc.apply {
                     driver = "org.mariadb.jdbc.Driver"
-                    url = "jdbc:mariadb://localhost:3306/test"
+                    url = "jdbc:mariadb://localhost:3306/furniture"
                     user = "root"
                     password = "3302"
                 }
@@ -83,12 +83,12 @@ jooq {
                     strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
                     database.apply {
                         name = "org.jooq.meta.mariadb.MariaDBDatabase"
-                        inputSchema = "test" // 일반적으로 DB명과 동일함
+                        inputSchema = "furniture"
                         forcedTypes = listOf(
                             ForcedType().apply {
-                                name = "INSTANT" // <-- java.time.Instant
-                                types = "timestamp|datetime" // MariaDB, MySQL 기준
-                                expression = ".*" // 모든 컬럼에 적용하거나 원하는 컬럼명 정규식
+                                name = "INSTANT"
+                                types = "timestamp|datetime"
+                                expression = ".*"
                             }
                         )
                     }
