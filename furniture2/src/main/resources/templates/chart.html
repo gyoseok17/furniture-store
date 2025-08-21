@@ -1,0 +1,242 @@
+
+<div class="wrap" th:fragment="content">
+	<div>
+		<h1># Mixed Chart</h1>
+        <canvas id="myChart" style="height:30vh; width:50vw"></canvas>
+    </div>
+    
+    <div class="mt10">
+    	<h1>#Doughnut Chart</h1>
+ 	    <canvas id="myChart1" style="height:30vh; width:50vw"></canvas>
+    </div>
+	<script type='text/javascript' th:inline="javascript" >
+		var data = {"gubun":"경기고속","category":"주행거리","swYear":"2023","swAverage":"61.03","jan":"73.5","feb":"75.962","mar":"66.564","apr":"63.434","may":"65.89","jun":"59.71","jul":"59.051","aug":"51.897","sept":"54.511","oct":"53.023","nov":"49.998","decem":"59.736","swSum":""};
+		jQuery().ready(function(){
+				console.log("ready!");
+				mixChart();
+				DoughnutChart();
+		});
+		
+		// 바,선 그래프 
+		function mixChart(){
+			
+			  //조건값
+			  let sendData = {
+					"start" : '2024-03-01',
+					"last" : '2024-03-31',
+					"select1" : 'select1',
+					//조건 추가 고려
+					//"select2" : ''
+				}	
+				
+			  let labels = [];			  
+			  let bardata1 = [];
+			  let bardata2 = [];	
+			  
+			  //일별만 가개발	
+			  $.ajax({
+			    type: "POST",
+			    url : "/chart/data",
+			    data : JSON.stringify(sendData),
+			    dataType: "json",
+			    contentType:"application/json;charset=UTF-8",
+			    async: false,
+			    success : function(data, status, xhr) {
+			      console.log(data);
+			      console.log(data.currntMonthbujui, data.currntMonthbujui.length); //4			      
+			      
+			      labels = data.currntMonthbujui.map(item => item.date);
+			      console.log(labels);
+			      
+			      bardata1 = data.lastMonthbujui.map(item => item.measure)
+			      console.log(bardata1);
+			      
+			      bardata2 = data.currntMonthbujui.map(item => item.measure)
+			      console.log(bardata2);			      
+			      
+			    },
+			    error: function(jqXHR, textStatus, errorThrown) {
+			      alert("error= " + errorThrown);
+			    }
+			  });
+			  
+	  
+	  
+			const ctx = document.getElementById('myChart').getContext('2d');
+			const config = {
+						data: {
+					labels: labels,
+							//['01월', '02월', '03월', '04월', '05월', '06월', '07월', '08월', '09월', '10월', '11월', '12월'],
+					datasets: [
+						// 막대 그래프
+						{
+							type: 'bar',
+							label: data.gubun + " " + data.swYear + "년 데이터",
+							data: bardata1,
+									//[data.jan, data.feb, data.mar, data.apr, data.may, data.jun, data.jul, data.aug, data.sept, data.oct, data.nov, data.decem],
+							backgroundColor: 'rgba(54, 162, 235, 1)',
+							borderColor: 'rgba(54, 162, 235, 1)',
+							borderWidth: 1,
+							order: 2
+						},
+						{
+							type: 'bar',
+							label: data.gubun + " " + data.swYear + "년 데이터",
+							data:  bardata2,
+									//[data.jan-10, data.feb-10, data.mar-10, data.apr-10, data.may-10, data.jun-10, data.jul-10, data.aug-10, data.sept-10, data.oct-10, data.nov-10, data.decem-10],
+							backgroundColor: 'rgba(71, 123, 255, 1)',
+							borderColor: 'rgba(71, 123, 255, 1)',
+							borderWidth: 1,
+							order: 2
+						},
+						// 라인 그래프
+						{
+							type: 'line',
+							label: '회사(60)',
+							data: [60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60],
+							borderColor: 'rgba(255, 75, 20, 1)',
+							backgroundColor: 'rgba(255, 75, 20, 1)',
+							borderWidth: 2, // 선 두께
+							pointRadius: 1 , // 포인트(동그란거) 지름 길이
+							pointHoverRadius: 8, // 포인트에 마우스 올렸을 때의 지름 길이
+							order: 2, // 라인 그래프를 막대 그래프 위에 보이기
+							borderDash: [5,5] // 점선
+						},
+						{
+							type: 'line',
+							label: '전체(50)',
+							data: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+							borderColor: 'rgba(7, 197, 61, 1)',
+							backgroundColor: 'rgba(7, 197, 61, 1)',
+							borderWidth: 2, // 선 두께
+							pointRadius: 1, // 포인트(동그란거) 지름 길이
+							pointHoverRadius: 8, // 포인트에 마우스 올렸을 때의 지름 길이
+							order: 2, // 라인 그래프를 막대 그래프 위에 보이기
+							borderDash: [5,5] // 점선
+						},
+						{
+							type: 'line',
+							label: '나(55)',
+							data: [55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55],
+							borderColor: 'rgba(255, 231, 71, 1)',
+							backgroundColor: 'rgba(255, 231, 71, 1)',
+							borderWidth: 2, // 선 두께
+							pointRadius: 1, // 포인트(동그란거) 지름 길이
+							pointHoverRadius: 8, // 포인트에 마우스 올렸을 때의 지름 길이
+							order: 2, // 라인 그래프를 막대 그래프 위에 보이기
+							borderDash: [5,5] // 점선
+						}
+					]
+				},
+				options: {
+					scales: {
+						x: {
+							ticks: {
+								font: {
+									size: 11,
+								},
+								color: "black"
+							}
+						},
+						y: {
+							beginAtZero: false,
+							ticks: {
+								font: {
+									size: 11,
+								},
+								color: "black"
+							}
+						},
+					},
+				
+					plugins: {
+						// 툴팁 (바 그래프에 마우스를 올리면 나타나는 것)
+						tooltip: {
+							callbacks: {
+								label: function(context) {
+									if (context.datasetIndex === 0 || context.datasetIndex === 1) { // 막대 그래프쪽
+										let label = context.dataset.label || '';
+										
+										if (label) {
+											if(context.datasetIndex === 0){
+												label = '급가속:'; 
+											}else{
+												label = '급감속:'; 
+											}
+										}
+										if (context.parsed.y !== null) {
+											label += context.parsed.y.toString();
+										}
+										return label;
+		
+									} else if (context.datasetIndex === 2) { // 라인 그래프쪽
+										return context.parsed.y + "입니다";
+									}
+								}
+							}
+						},
+						// 범례
+						legend: {
+							align : 'end',
+							position: 'top',
+							labels: {
+								font: {
+									size: 13
+								},
+								color: "black"
+							}
+						}
+					}
+				}
+			}
+	
+			const myChart = new Chart(ctx, config);
+		}
+		
+		// 도넛차트 
+		function DoughnutChart(){
+			const ctx = document.getElementById('myChart1').getContext('2d');
+			const config = {
+				type: 'doughnut',
+				data: {
+						datasets: [{
+							data: [10, 20, 30]
+						}],
+						// 이 라벨들은 다른 호들을 호버했을 때 툴팁과 범례 안에서 표현됩니다
+						labels: [
+							'좋음',
+							'나쁨',
+							'보통'
+						]
+					},
+					options: {
+					responsive: false, // 크기 변경(정적,동적이던 크기 변경하려면 false)
+					plugins: {
+						legend: {
+							align : 'end',
+							position: 'top',
+							labels: {
+								font: {
+									size: 13
+								},
+								color: "black"
+							}
+							
+						},
+						title: {
+						display: true,
+						text: '주행거리 부주의 다발'
+						},
+						animation: {
+							animateScale: true, // true면, chart 크기가 커지면서 display
+							animateRotate: true // true면, chart가 회전하면서 display
+							}
+					}
+					},
+			}
+			const myChart1 = new Chart(ctx, config);
+	
+		}
+			
+	</script>
+</div>	

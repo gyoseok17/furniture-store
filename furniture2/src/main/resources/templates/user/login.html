@@ -1,0 +1,65 @@
+
+<div id="wrapper" th:fragment="content">
+    <style>
+        .login-box {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+
+    <div class="container" style="margin-top:20rem">
+        <div class="login-box">
+            <h3 class="text-center mb-4">로그인</h3>
+
+            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                Invalid username or password.
+            </div>
+
+            <form id="loginForm" method="POST" th:action="@{/user/login}">
+                <div class="mb-3">
+                    <label class="form-label">회원 유형</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="role" value="GENERAL" id="roleGeneral" checked>
+                        <label class="form-check-label" for="roleGeneral">일반회원</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="role" value="BUSINESS" id="roleBusiness">
+                        <label class="form-check-label" for="roleBusiness">기업회원</label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="userId" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디 입력"
+                           th:value="${savedUserId}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pwd" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="pwd" name="pwd" placeholder="비밀번호 입력">
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="rememberId" name="rememberId"
+                           th:checked="${savedUserId != null && !savedUserId.isEmpty()}">
+                    <label class="form-check-label" for="rememberId">아이디 저장</label>
+                </div>
+
+                <div class="d-grid gap-2 mb-2">
+                    <button type="submit" class="btn btn-primary">로그인</button>
+                </div>
+
+                <div class="text-center">
+                    <a href="/user/register">회원가입</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+</div>

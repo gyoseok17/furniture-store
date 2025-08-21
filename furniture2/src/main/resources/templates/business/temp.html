@@ -1,0 +1,40 @@
+// 상품 등록 페이지
+@GetMapping("/newProduct")
+public String showProductForm(Model model) {
+    model.addAttribute("page", "business/newProduct");
+    return "fragments/layout";
+}
+
+// ✅ 상품 등록 처리 (색상 분석 결과 포함)
+@PostMapping("/newProduct")
+public String registerProduct(@AuthenticationPrincipal CustomUserDetails userDetails,
+                              @ModelAttribute ProductForm form,
+                              @RequestParam(value = "colorMatchResult", required = false) String colorMatchJson) {
+
+    String businessNumber = businessProductUseCase.getBusinessNumber(userDetails.getUsername());
+
+    if (colorMatchJson != null && !colorMatchJson.isEmpty()) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ColorAnalyzerResponse result = mapper.readValue(colorMatchJson, ColorAnalyzerResponse.class);
+            form.setAnalyzedColor(result.getBest_match()); // 또는 적절한 필드에 값 설정
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    businessProductUseCase.registerProduct(form, businessNumber);
+    return "redirect:/business/productList";
+}
+
+// ✅ 색상 분석 API (Flask 호출)
+@PostMapping("/ColorAnalyzer")
+public ResponseEntity<ColorAnalyzerResponse> analyzeColor(@RequestParam("file") MultipartFile file) {
+    try {
+        ColorAnalyzerResponse result = businessProductUseCase.sendToFlaskForAnalyze(file);
+        return ResponseEntity.ok(result);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ColorAnalyzerResponse("ERROR: " + e.getMessage(), -1));
+    }
+}

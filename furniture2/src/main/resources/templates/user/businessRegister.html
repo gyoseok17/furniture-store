@@ -1,0 +1,141 @@
+<div id="wrapper" th:fragment="content">
+    <div class="container mt-5">
+        <h2 class="text-center">기업 회원 가입</h2>
+
+        <!-- 회원 가입 성공 메시지 -->
+        <div th:if="${message}" class="alert alert-success">
+            <span th:text="${message}"></span>
+        </div>
+        <form th:action="@{/user/businessRegister}" method="post" th:object="${userBusinessForm}" onsubmit="return validateForm()">
+            <div class="mb-3">
+                <label for="businessName" class="form-label">사업자 상호명</label>
+                <input type="text" class="form-control" th:field="*{businessForm.businessName}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="businessNumber" class="form-label">사업자 등록번호</label>
+                <input type="text" class="form-control" th:field="*{businessForm.businessNumber}"
+                       maxlength="12" required oninput="formatBusinessNumber(this)">
+            </div>
+
+            <div class="mb-3">
+                <label for="userId" class="form-label">아이디</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="userId" th:field="*{userForm.userId}" required>
+                    <button type="button" class="btn btn-secondary" onclick="checkUserId()">중복 확인</button>
+                </div>
+                <small id="checkResult" class="text-muted"></small>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="password" class="form-control" th:field="*{userForm.pwd}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="userNm" class="form-label">이름</label>
+                <input type="text" class="form-control" th:field="*{userForm.userNm}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">이메일</label>
+                <input type="email" class="form-control" th:field="*{userForm.email}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="zipcode" class="form-label">우편번호</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" th:field="*{userForm.zipcode}" readonly>
+                    <button type="button" class="btn btn-outline-secondary" onclick="execDaumPostcode()">주소 찾기</button>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="address" class="form-label">기본 주소</label>
+                <input type="text" class="form-control" th:field="*{userForm.address}" readonly>
+            </div>
+            
+            <div class="mb-3">
+                <label for="addressDetail" class="form-label">상세 주소</label>
+                <input type="text" class="form-control" th:field="*{userForm.addressDetail}">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">회원 가입</button>
+        </form>
+
+        <div class="mt-3 text-center">
+            <a href="/user/login">로그인</a>
+        </div>
+    </div>
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script> 
+    <script> //주소 검색
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById("zipcode").value = data.zonecode;
+                    document.getElementById("address").value = data.address;
+                    document.getElementById("addressDetail").focus();
+                }
+            }).open();
+        }
+    </script>
+    <script> //사업자 번호 입력
+        function formatBusinessNumber(input) {
+            let value = input.value.replace(/[^0-9]/g, ""); // 숫자만 남기기
+            if (value.length > 3 && value.length <= 5) {
+                value = value.slice(0, 3) + "-" + value.slice(3);
+            } else if (value.length > 5) {
+                value = value.slice(0, 3) + "-" + value.slice(3, 5) + "-" + value.slice(5, 10);
+            }
+            input.value = value;
+        }
+    </script>
+    <script>
+        let isUserIdChecked = false;
+        
+        function checkUserId() {
+            const userId = document.getElementById("userId").value.trim();
+        
+            if (userId === "") {
+                document.getElementById("checkResult").innerHTML = "<span class='text-danger'>아이디를 입력하세요.</span>";
+                isUserIdChecked = false;
+                return;
+            }
+        
+            fetch(`/user/checkUserId?userId=${encodeURIComponent(userId)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("서버 오류");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.exists) {
+                        document.getElementById("checkResult").innerHTML = "<span class='text-danger'>이미 존재하는 아이디입니다.</span>";
+                        isUserIdChecked = false;
+                    } else {
+                        document.getElementById("checkResult").innerHTML = "<span class='text-success'>사용 가능한 아이디입니다.</span>";
+                        isUserIdChecked = true;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("checkResult").innerHTML = "<span class='text-danger'>중복 확인 중 오류가 발생했습니다.</span>";
+                    isUserIdChecked = false;
+                });
+        }
+        // 아이디 입력 시 검사 다시 하도록 처리
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("userId").addEventListener("input", function () {
+                isUserIdChecked = false;
+                document.getElementById("checkResult").innerHTML = "";
+            });
+        });
+        function validateForm() {
+            if (!isUserIdChecked) {
+                alert("아이디 중복 검사를 해주세요.");
+                return false; // 🚫 제출 차단
+            }
+            return true; // ✅ 통과 시 제출
+        }
+    </script>
+</div>

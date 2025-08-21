@@ -1,0 +1,17 @@
+<div id="wrapper" th:fragment="content">
+
+	<div class="container">
+		<p>INDEX 화면입니다</p>
+	</div>
+	<script type='text/javascript' th:inline="javascript" >
+		const logoutText = /*[[@{${logout}}]]*/ '';
+
+		(()=>{
+			if(logoutText==='concurrent'){
+				alert('동시접속으로 인해 로그아웃됩니다.');
+			}
+		})()
+		
+
+	</script>
+</div>

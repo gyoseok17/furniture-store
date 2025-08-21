@@ -1,0 +1,100 @@
+<div id="wrapper" th:fragment="content">
+    <div class="container mt-5">
+        <div class="row">     
+
+            <div class="col-md-6">
+                <h3 class="mt-4 text-center">🟠 일반 회원 리스트</h3>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>아이디</th>
+                            <th>이름</th>
+                            <th>이메일</th>
+                            <th>구분</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="general : ${GeneralUsers}">
+                            <td th:text="${general.userId}"></td>
+                            <td th:text="${general.userNm}"></td>
+                            <td th:text="${general.email}"></td>
+                            <td th:text="${general.role}"></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(GeneralUsers)}">
+                            <td colspan="4" class="text-center">회원이 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h3 class="mt-4 text-center">기업 회원 리스트</h3>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>아이디</th>
+                            <th>이름</th>
+                            <th>상호명</th>
+                            <th>사업자 번호</th>
+                            <th>구분</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="business : ${BusinessUsers}">
+                            <td th:text="${business.userId}"></td>
+                            <td th:text="${business.userNm}"></td>
+                            <td th:text="${business.businessName}"></td>
+                            <td th:text="${business.businessNumber}"></td>
+                            <td>
+                                <div th:if="${business.approvedYn} eq 'N'">
+                                    <button class="btn btn-success btn-sm" th:onclick="approveUser([[${business.userId}]])">승인</button>
+                                    <button class="btn btn-danger btn-sm" th:onclick="rejectUser([[${business.userId}]])">거절</button>
+                                </div>
+                                <div th:if="${business.approvedYn} eq 'Y'">승인</div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(BusinessUsers)}">
+                            <td colspan="4" class="text-center">회원이 없습니다.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 승인/거절 AJAX 처리 -->
+    <script>
+        function approveUser(userId) {
+            if (confirm("해당 회원을 승인하시겠습니까?")) {      
+                fetch(`/admin/approve/` + userId, {
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    }
+                })
+                .then(async res => {
+                    const msg = await res.text();
+                    if (!res.ok) {
+                        alert("❌ 오류 발생: " + msg);
+                        throw new Error(msg); // reload 막기 위해 throw
+                    }
+                    alert("✅ " + msg); // ex: 승인 완료
+                    location.reload();
+                })
+                .catch(err => {
+                    console.error("fetch 실패:", err);
+                });
+            }
+        }
+
+        function rejectUser(userId) {
+            if (confirm("해당 회원을 거절하시겠습니까?")) {
+                fetch(`/admin/reject/` + userId, {
+                    method: 'POST',
+                    headers: {
+                        [csrfHeader]: csrfToken
+                    }
+                }).then(() => location.reload());
+            }
+        }
+    </script>
+</div>

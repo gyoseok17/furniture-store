@@ -1,0 +1,82 @@
+
+<div id="wrapper" th:fragment="content">
+<script>
+$(function(){		
+	//체크박스
+	$(".nosun").change(function(){
+		console.log('nosun change : ' + $(".nosun:checked").length);
+		console.log(JSON.stringify($(".nosun:checked")));
+		let length = $(".nosun:checked").length;		
+		
+		
+		let control = "C"; //슈퍼관리자(S) or 회원사(C)		
+		let company = "kk";//경기고속
+		let nosuns = []; 
+		//['1111','1112','1113'];//노선(배열가능) - 노선아이디 노선명
+		let vehicles = ['61','62','63','64'];//운행 노선차량(배열 가능) 노선,차량,운전자 매핑 확인 필요.
+		
+		
+		$(".nosun:checked").each(function(index){
+			console.log('checked values');
+			/*console.log($(this).val());*/
+			//alert($(this).val());
+			nosuns.push($(this).val());
+		});
+		
+		console.log(nosuns);
+		
+		let sendData = {
+				"control" : control,
+				"company" : company,
+				"nosun" : nosuns,
+				"vehicles" : vehicles
+			}
+		
+	/*	
+	  $.ajax({
+	    type: "POST",
+	    url : "/nosun/data",
+	    data : JSON.stringify(sendData),
+	    dataType: "json",
+	    contentType:"application/json;charset=UTF-8",
+	    async: false,
+	    success : function(data, status, xhr) {
+	      console.log(data);
+	      console.log(data.bujui, data.bujui.length); // 3
+	      console.log(data.stress);
+	      console.log(data.vehicles);
+	      
+	      //데이터를 기준으로 카카오맵 노출하기
+	      //마커 생성, 인포 생성
+	      data.bujui.forEach(function(el, index){
+			 console.log(el);
+			 console.log(el.lat);
+			 console.log(el.lng);
+			 console.log(el.nosun);
+			 console.log(el.v_number);
+			 console.log(el.d_name); 
+		  });
+	      
+	      
+	    },
+	    error: function(jqXHR, textStatus, errorThrown) {
+	      alert("error= " + errorThrown);
+	    }
+	  });
+	  */
+		
+	});	
+});		
+</script>
+	<div class="container">
+		<div>
+			<ul>
+			<!-- value : 노선아이디, label : 노선명-->
+			<li><input type="checkbox" class="nosun" value="1"><label>N1347</label></li>
+			<li><input type="checkbox" class="nosun" value="2"><label>3557</label</li>
+			<li><input type="checkbox" class="nosun" value="3"><label>경기4532</label</li>		
+			</ul>
+		</div>
+	</div>
+
+</div>

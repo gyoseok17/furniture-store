@@ -1,0 +1,58 @@
+<div id="wrapper" th:fragment="content">
+  <div class="container mt-5">
+    <h2 class="mb-4">내 상품 관리</h2>
+    <p th:text="|총 ${products.size()}개의 상품이 검색되었습니다.|" class="mb-3 text-muted"></p>
+
+    <div class="mb-3 text-end">
+      <a href="/business/newProduct" class="btn btn-primary">➕ 상품 등록</a>
+    </div>
+
+    <form method="get" th:action="@{/business/productList}" class="row mb-3">
+      <div class="col-md-4">
+        <input type="text" name="keyword" class="form-control" placeholder="모델명 검색"
+              th:value="${param.keyword}">
+      </div>
+      <div class="col-md-6 d-flex align-items-center gap-3">
+        <label><input type="checkbox" name="category" value="bed"
+              th:checked="${param.category == null or #lists.contains(param.category, 'bed')}"> 침대</label>
+        <label><input type="checkbox" name="category" value="chair"
+              th:checked="${param.category == null or #lists.contains(param.category, 'chair')}"> 의자</label>
+        <label><input type="checkbox" name="category" value="sofa"
+              th:checked="${param.category == null or #lists.contains(param.category, 'sofa')}"> 소파</label>
+        <label><input type="checkbox" name="category" value="table"
+              th:checked="${param.category == null or #lists.contains(param.category, 'table')}"> 테이블</label>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-primary w-100">검색</button>
+      </div>
+    </form>
+
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">이미지</th>
+          <th scope="col">모델명</th>
+          <th scope="col">가격</th>
+          <th scope="col">카테고리</th>
+          <th scope="col">수정</th>
+          <th scope="col">삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="product : ${products}">
+          <td><img th:src="${product.imageUrl}" th:alt="${product.modelName}" style="width: 80px; height: 80px; object-fit: cover;"></td>
+          <td th:text="${product.modelName}">모델명</td>
+          <td th:text="|\${#numbers.formatInteger(product.price, 3, 'COMMA')}|">가격</td>
+          <td th:text="${product.category}">카테고리</td>
+          <td><a th:href="@{|/business/producEdit/${product.id}|}" class="btn btn-sm btn-outline-secondary">수정</a></td>
+          <td>
+            <form th:action="@{|/business/productDelete/${product.id}|}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+              <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

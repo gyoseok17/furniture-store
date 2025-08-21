@@ -1,0 +1,60 @@
+<!-- 모달 -->
+<!-- 상세 모달 -->
+
+<div th:fragment="detailModalFragment" class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">상품 상세</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <!-- 상단: 제품 이미지 -->
+                <div class="text-center mb-3">
+                    <img id="productImg" src="" class="img-fluid" alt="제품 이미지">
+                </div>
+
+                <!-- 제품 정보 -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-1" id="productName">제품 이름</h5>
+                            <p class="mb-0 text-muted" id="productPrice">₩100,000</p>
+                        </div>
+                        <button id="addToWishlistBtn" class="btn btn-outline-primary">🛒 장바구니 담기</button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- 제품 설명 -->
+                <h6 class="mt-3">제품 설명</h6>
+                <p id="productDetailDescription">이 제품은 고급 소재로 제작되어 내구성이 뛰어나고 편안한 사용감을 제공합니다.</p>
+
+                <!-- 상세 이미지 -->
+                <div class="d-flex gap-3">
+                    <img id="dimensionImage" src="" class="img-thumbnail" alt="추가 이미지 1">
+                    <div id="dimensionDetail" style="text-align: right">
+                        <p>전체 길이: 197 cm (77 1/2")</p>
+                        <p>시트 깊이: 59 cm (23 1/4")</p>
+                        <p>시트 높이: 46 cm (18 1/8")</p>
+                        <p>팔걸이 두께: 8 cm (3 1/8")</p>
+                        <p>등받이 높이: 76 cm (29 7/8")</p>
+                        <p>카우치 길이: 145 cm (57 1/8")</p>
+                        <p>시트 길이: 127 cm (50")</p>
+                        <p>전체 깊이: 80.5 cm (31 3/4")</p>
+                        <p>다리 높이: 15 cm (5 7/8")</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,380 @@
+<div id="wrapper" th:fragment="content">
+  <style>
+    .container {
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .gallery-title {
+      font-size: 1.5rem;
+      margin: 30px 0 10px;
+      font-weight: bold;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 5px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .info {
+      padding: 15px;
+      text-align: center;
+    }
+    .info h3 {
+      margin: 10px 0 5px;
+      font-size: 1.2em;
+    }
+    .info p {
+      margin: 0;
+      color: #888;
+    }
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wishlist-sidebar {
+      background: #fafafa;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+      position: fixed;
+      top: 40px;
+      right: 40px;
+      width: 300px;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wishlist-sidebar .card {
+      display: flex;
+      gap: 10px;
+      background: white;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 8px;
+    }
+
+    .wishlist-sidebar .card img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .purchase-button {
+      margin-top: 16px;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .purchase-button:hover {
+      background-color: #45a049;
+    }
+
+    .purchase-button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <div class="container" style="position: relative;">
+    <!-- 왼쪽: 상품 목록 -->
+    <div style="margin-right: 360px;"> <!-- 장바구니 공간 확보 -->
+      <div class="gallery-title" th:text="${category}">카테고리명</div>
+      <div class="gallery-grid" id="product-container">
+        <div class="card"
+            th:each="product : ${products}"
+            th:attr="ondblclick=|openDetailModal('${product.id}')|">
+          <img th:src="${product.imageUrl}" th:alt="${product.modelName}">
+          <div class="info">
+            <h3 style="font-weight: bold;" th:text="${product.modelName}">모델명</h3>
+            <p th:text="${product.description}">상세설명</p>
+            <p style="font-weight: bold; font-size: 1.2em;"
+              th:text="|₩${#numbers.formatInteger(product.price, 3, 'COMMA')}|">가격</p>
+          </div>
+        </div>
+      </div>
+      <div id="loading" style="text-align:center; padding:20px; color:#888;">Loading...</div>
+    </div>
+
+    <!-- 오른쪽: 위시리스트 -->
+    <div class="wishlist-sidebar">
+      <h3 style="margin-bottom: 16px;">🛒 내 장바구니</h3>
+      <div id="wishlist-items" style="display: flex; flex-direction: column; gap: 12px;"></div>
+      <div id="empty-wishlist-message" style="color: #888; font-size: 0.95rem; margin-top: 10px;">
+        장바구니가 비어 있습니다.
+      </div>
+      <button id="purchase-button" class="purchase-button" disabled>구매하기</button>
+    </div>
+  </div>
+
+  <div th:replace="~{modal/funitureDetailModal :: detailModalFragment}">
+
+  </div>
+
+  <script th:inline="javascript">
+    let page = 1;
+    let loading = false;
+    let category = /*[[${category}]]*/ "";
+    //스크롤 내릴 때마다 상품을 불러오는 이벤트 리스너
+    window.addEventListener('scroll', () => {
+      if (loading) return;
+
+      const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+      if (nearBottom) {
+        loading = true;
+        page++;
+        fetch(`/furniture/shop/load-more?category=${category}&page=${page}`)
+          .then(res => res.json())
+          .then(products => {
+            const container = document.getElementById('product-container');
+            for (let p of products) {
+              const card = document.createElement('div');
+
+              card.className = 'card';
+              card.innerHTML = `
+                <img src="${p.imageUrl}" alt="${p.modelName}">
+                <div class="info">
+                  <h3 style="font-weight: bold;">${p.modelName}</h3>
+                  <p>${p.description}</p>
+                  <p style="font-weight: bold; font-size: 1.2em;">₩${p.price.toLocaleString()}</p>
+                </div>
+              `;
+              container.appendChild(card);
+
+              card.ondblclick = () => openDetailModal(p?.id);
+            }
+
+            if (products.length < 18) {
+              document.getElementById('loading').innerText = '모든 상품을 불러왔습니다.';
+            } else {
+              loading = false;
+            }
+          })
+          .catch(e => {
+            document.getElementById('loading').innerText = '불러오기 실패';
+            console.error(e);
+          });
+      }
+    });
+
+    //더블 클릭 시 상품 상세 모달 열기
+    const openDetailModal = async(productId) => {
+      const response = await fetch(`/furniture/shop/detail/${productId}`);
+      if (!response.ok) {
+        console.error("서버오류");
+        return;
+      }
+      const jsonObject = await response.json()
+      const detailProduct = jsonObject?.detailProduct
+      
+      const img = document.getElementById("productImg");
+      img.src = detailProduct.imageUrl;
+      img.setAttribute("data-id", detailProduct.id);
+
+      document.getElementById("productName").innerText = detailProduct.modelName
+      document.getElementById("productPrice").innerText = `₩${detailProduct.price.toLocaleString()}`
+      document.getElementById("productDetailDescription").innerText = detailProduct.description
+      document.getElementById("dimensionImage").src = detailProduct.dimensionImage
+      document.getElementById("dimensionDetail").innerHTML = ""
+      let pTag = ""
+      detailProduct.dimensionsVoList.forEach(item=>{
+        pTag +=`<p> ${item.keyName} : ${item.valueText} </p>`
+      })
+      document.getElementById("dimensionDetail").innerHTML = pTag
+
+      console.log(detailProduct)
+
+      // 장바구니 담기 버튼은 로그인 시에만 동작
+      const isLoggedIn = /*[[${isLoggedIn}]]*/ false;
+      document.getElementById("addToWishlistBtn").onclick = async () => {
+        if (!isLoggedIn) {
+          alert("로그인이 필요합니다.");
+          return;
+        }
+        const productId = img.getAttribute("data-id");
+        const response = await fetch('/furniture/shop/wishlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+          },
+          body: JSON.stringify({
+            productId: parseInt(productId),
+            quantity: 1
+          })
+        });
+
+        if (response.ok) {
+          if (typeof reloadWishlistSidebar === 'function') {
+            reloadWishlistSidebar();
+          }
+          alert("장바구니에 담겼습니다!");
+        } else if (response.status === 401) {
+          alert("로그인이 필요합니다.");
+        } else {
+          alert("장바구니 담기에 실패했습니다.");
+        }
+      };
+
+      // 모달 표시
+      const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+      modal.show();
+    }
+
+    // 페이지 로드 시 위시리스트 불러오기
+    const isLoggedIn = /*[[${isLoggedIn}]]*/ false;
+    document.addEventListener('DOMContentLoaded', function() {
+      if (isLoggedIn) {
+        reloadWishlistSidebar();
+      } else {
+        const wishlistBox = document.getElementById('wishlist-items');
+        const emptyMsg = document.getElementById('empty-wishlist-message');
+        wishlistBox.innerHTML = '';
+        emptyMsg.innerText = '로그인이 필요합니다.';
+        emptyMsg.style.display = 'block';
+      }
+    });
+
+    // 장바구니 사이드바 갱신 함수
+    async function reloadWishlistSidebar() {
+      const wishlistBox = document.getElementById('wishlist-items');
+      const emptyMsg = document.getElementById('empty-wishlist-message');
+      const purchaseButton = document.getElementById('purchase-button');
+
+      const res = await fetch('/furniture/shop/wishlist');
+      if (res.status === 401) {
+        wishlistBox.innerHTML = '';
+        emptyMsg.innerText = '로그인이 필요합니다.';
+        emptyMsg.style.display = 'block';
+        purchaseButton.disabled = true;
+        return;
+      }
+
+      const wishlistItems = await res.json();
+
+      wishlistBox.innerHTML = '';
+
+      if (!Array.isArray(wishlistItems) || wishlistItems.length === 0) {
+        emptyMsg.innerText = '장바구니가 비어 있습니다.';
+        emptyMsg.style.display = 'block';
+        purchaseButton.disabled = true;
+        return;
+      }
+
+      emptyMsg.style.display = 'none';
+      purchaseButton.disabled = false;
+
+      let totalAmount = 0;
+
+      wishlistItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <div style="position: relative;">
+            <img src="${item.image_url}" alt="${item.model_name}" 
+                style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+            <button class="remove-btn" data-product-id="${item.productId}" 
+                style="position: absolute; top: 0; right: 0; background: none; border: none; font-size: 18px; color: #888; cursor: pointer;">✕</button>
+          </div>
+
+          <div style="flex: 1;">
+            <div style="font-weight: bold;">${item.model_name}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+              <span>₩${Number(item.price).toLocaleString()} × ${item.quantity}</span>
+              <div style="display: flex; gap: 4px;">
+                <button class="qty-btn" data-action="increase" data-product-id="${item.productId}" 
+                        style="width: 28px; height: 28px; font-size: 16px;">＋</button>
+                <button class="qty-btn" data-action="decrease" data-product-id="${item.productId}" 
+                        style="width: 28px; height: 28px; font-size: 16px;">−</button>
+              </div>
+            </div>
+          </div>
+        `;
+        wishlistBox.appendChild(div);
+        totalAmount += Number(item.price) * item.quantity;
+      });
+
+      // 총 금액 표시
+      const totalDiv = document.createElement('div');
+      totalDiv.style.marginTop = '16px';
+      totalDiv.style.padding = '12px';
+      totalDiv.style.backgroundColor = '#f8f8f8';
+      totalDiv.style.borderRadius = '6px';
+      totalDiv.style.fontWeight = 'bold';
+      totalDiv.innerHTML = `총 금액: ₩${totalAmount.toLocaleString()}`;
+      wishlistBox.appendChild(totalDiv);
+    }
+
+    document.querySelector('.wishlist-sidebar').addEventListener('click', async (e) => {
+      if (e.target.classList.contains('remove-btn')) {
+        const productId = e.target.getAttribute('data-product-id');
+        const res = await fetch(`/furniture/shop/wishlist/${productId}`, {
+          method: 'DELETE',
+          headers: { 'X-CSRF-TOKEN': csrfToken }
+        });
+        if (res.ok) reloadWishlistSidebar();
+      }
+
+      if (e.target.classList.contains('qty-btn')) {
+        const productId = e.target.getAttribute('data-product-id');
+        const action = e.target.getAttribute('data-action');
+        const res = await fetch(`/furniture/shop/wishlist/${productId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+          },
+          body: JSON.stringify({ action })
+        });
+        if (res.ok) reloadWishlistSidebar();
+      }
+    });
+
+    // 구매하기 버튼 클릭 이벤트
+    document.getElementById('purchase-button').addEventListener('click', async function() {
+        const wishlistItems = document.getElementById('wishlist-items').children;
+        if (wishlistItems.length === 0) {
+            alert('장바구니가 비어있습니다.');
+            return;
+        }
+
+        // 결제 페이지로 이동
+        window.location.href = '/furniture/shop/payment';
+    });
+  </script>
+</div>

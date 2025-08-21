@@ -1,0 +1,70 @@
+<div class="header" th:fragment="header">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/furniture/main">가구장터</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              가구
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li th:each="category : ${categories}">
+                <a class="dropdown-item"
+                  th:href="@{'/furniture/shop?category=' + ${category}}"
+                   th:text="${category}">카테고리명</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto">
+          <th:block sec:authorize="hasRole('ADMIN')">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/user_list">회원목록</a>
+            </li>
+          </th:block>
+
+          <th:block sec:authorize="isAuthenticated()">
+            <!-- 유저 ID  드롭다운 -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="mypageDropdown" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                th:text="${#authentication.name + ' 님'}">
+                사용자아이디
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mypageDropdown">
+                <!-- 비즈니스 유저일 경우만 보이게 -->
+                <th:block sec:authorize="hasRole('BUSINESS')">
+                  <li><a class="dropdown-item" href="/business/productList">상품 관리</a></li>
+                </th:block>
+                <li><a class="dropdown-item" href="/furniture/myPage">내 상품</a></li>
+              </ul>
+            </li>
+
+            <!-- 로그아웃 버튼 -->
+            <li class="nav-item">
+              <form class="d-flex" role="search" id="logoutForm" th:action="@{/logout}" method="post" style="display: inline;">
+                <button class="btn btn-outline-success" type="submit">logout</button>
+              </form>
+            </li>
+          </th:block>
+
+          <th:block sec:authorize="isAnonymous()">
+            <li class="nav-item">
+              <a class="nav-link" href="/user/login">로그인</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/user/register">회원가입</a>
+            </li>
+          </th:block>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>

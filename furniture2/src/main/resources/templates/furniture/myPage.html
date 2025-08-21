@@ -1,0 +1,395 @@
+<!--<div id="wrapper" th:fragment="content">
+    <h2>장바구니</h2>
+    <div th:if="${#lists.isEmpty(wishlist)}">위시리스트가 비어 있습니다.</div>
+    <div th:each="item : ${wishlist}">
+        <div>
+            <img th:src="${item.image_url}" style="width:50px;height:50px;">
+            <span th:text="${item.model_name}"></span>
+            <span th:text="${item.quantity} + '개'"></span>
+            <span th:text="${item.price} + '원'"></span>
+        </div>
+    </div>
+
+    <h2 style="margin-top:30px;">구매한 상품</h2>
+    <div th:if="${#lists.isEmpty(orderItems)}">구매 내역이 없습니다.</div>
+    <div th:each="item : ${orderItems}">
+        <div>
+            <img th:src="${item.image_url}" style="width:50px;height:50px;">
+            <span th:text="${item.model_name}"></span>
+            <span th:text="${item.quantity} + '개'"></span>
+            <span th:text="${item.price} + '원'"></span>
+        </div>
+    </div>
+</div>-->
+<div id="wrapper" th:fragment="content">
+    <style>
+        .wishlist-container {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .wishlist-item {
+            display: flex;
+            gap: 15px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .wishlist-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        
+        .wishlist-item-info {
+            flex: 1;
+        }
+        
+        .wishlist-item-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        
+        .wishlist-item-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .qty-btn:hover {
+            background: #f5f5f5;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .remove-btn:hover {
+            color: #ff4444;
+        }
+        
+        .total-amount {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: right;
+            font-size: 1.1em;
+        }
+        
+        .empty-message {
+            color: #888;
+            font-size: 1rem;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+        }
+    </style>
+
+    <h2>장바구니</h2>
+    <div class="wishlist-container">
+        <div id="wishlist-items"></div>
+        <div id="empty-wishlist-message" class="empty-message">장바구니를 불러오는 중...</div>
+        <div id="total-amount" class="total-amount" style="display: none;"></div>
+    </div>
+    
+    <!-- 주문 내역 영역 추가 -->
+    <h2 style="margin-top:30px;">주문 내역</h2>
+    <div class="order-history-container" style="margin-bottom:30px;">
+        <div th:if="${#lists.isEmpty(orderHistory)}" class="empty-message">주문 내역이 없습니다.</div>
+        <div th:each="order, iterStat : ${orderHistory}" class="order-history-item" style="border:1px solid #eee; border-radius:8px; padding:15px; margin-bottom:12px; cursor:pointer;"
+             th:onclick="|openOrderModal(${iterStat.index})|">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <b th:text="'주문번호: ' + ${order['id']}"></b>
+                    <span style="margin-left:15px;" th:text="${#temporals.format(order['created_at'], 'yyyy-MM-dd HH:mm')}"></span>
+                </div>
+                <span style="font-weight: bold;" th:text="'₩' + ${#numbers.formatInteger(order['total_amount'], 3, 'COMMA')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeOrderModal()">&times;</span>
+            <h3>주문 상세 정보</h3>
+            <div id="modal-order-id"></div>
+            <div id="modal-order-date"></div>
+            <hr>
+            <h4>배송 정보</h4>
+            <div id="modal-recipient-info"></div>
+            <div id="modal-address-info"></div>
+            <div id="modal-message"></div>
+            <hr>
+            <h4>주문 상품</h4>
+            <div id="modal-order-items"></div>
+            <hr>
+            <h4 style="text-align: right;" id="modal-total-amount"></h4>
+        </div>
+    </div>
+
+    <h2 style="margin-top: 30px;">총 구매 상품</h2>
+    <div class="purchased-items-container">
+        <div th:if="${#lists.isEmpty(purchasedProducts)}" class="empty-message">구매 내역이 없습니다.</div>
+        <div th:each="item : ${purchasedProducts}" class="purchased-item" style="display: flex; align-items: center; background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+            <img th:src="${item.image_url}" style="width: 70px; height: 70px; border-radius: 6px; margin-right: 20px;">
+            <div style="flex-grow: 1;">
+                <div style="font-weight: bold; font-size: 1.1em;" th:text="${item.model_name}"></div>
+                <div style="color: #666; margin-top: 5px;" th:text="'총 구매 수량: ' + ${item.total_quantity} + '개'"></div>
+            </div>
+            <div style="font-weight: bold; font-size: 1.1em;" th:text="'₩' + ${#numbers.formatInteger(item.price, 3, 'COMMA')}"></div>
+        </div>
+    </div>
+
+    <h2 style="margin-top:30px;" th:remove="all">구매한 상품</h2>
+    <div th:if="${#lists.isEmpty(orderItems)}" th:remove="all">구매 내역이 없습니다.</div>
+    <div th:each="item : ${orderItems}" style="margin-bottom: 10px;" th:remove="all">
+        <div>
+            <img th:src="${item.image_url}" style="width:50px;height:50px;">
+            <span th:text="${item.model_name}"></span>
+            <span th:text="${item.quantity} + '개'"></span>
+            <span th:text="${item.price} + '원'"></span>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const orderHistory = /*[[${orderHistory}]]*/ [];
+        /*]]>*/
+
+        // 페이지 로드 시 위시리스트 불러오기
+        document.addEventListener('DOMContentLoaded', function() {
+            reloadWishlist();
+        });
+
+        // 장바구니 갱신 함수
+        async function reloadWishlist() {
+            const wishlistBox = document.getElementById('wishlist-items');
+            const emptyMsg = document.getElementById('empty-wishlist-message');
+            const totalAmountDiv = document.getElementById('total-amount');
+
+            try {
+                const res = await fetch('/furniture/shop/wishlist');
+                
+                if (res.status === 401) {
+                    wishlistBox.innerHTML = '';
+                    emptyMsg.innerText = '로그인이 필요합니다.';
+                    emptyMsg.style.display = 'block';
+                    totalAmountDiv.style.display = 'none';
+                    return;
+                }
+
+                const wishlistItems = await res.json();
+                wishlistBox.innerHTML = '';
+
+                if (!Array.isArray(wishlistItems) || wishlistItems.length === 0) {
+                    emptyMsg.innerText = '장바구니가 비어 있습니다.';
+                    emptyMsg.style.display = 'block';
+                    totalAmountDiv.style.display = 'none';
+                    return;
+                }
+
+                emptyMsg.style.display = 'none';
+                let totalAmount = 0;
+
+                wishlistItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'wishlist-item';
+                    div.innerHTML = `
+                        <img src="${item.image_url}" alt="${item.model_name}">
+                        <div class="wishlist-item-info">
+                            <div class="wishlist-item-title">${item.model_name}</div>
+                            <div class="wishlist-item-controls">
+                                <div class="quantity-controls">
+                                    <button class="qty-btn" data-action="decrease" data-product-id="${item.productId}">−</button>
+                                    <span style="min-width: 30px; text-align: center;">${item.quantity}</span>
+                                    <button class="qty-btn" data-action="increase" data-product-id="${item.productId}">＋</button>
+                                </div>
+                                <span style="font-weight: bold;">₩${Number(item.price).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <button class="remove-btn" data-product-id="${item.productId}">✕</button>
+                    `;
+                    wishlistBox.appendChild(div);
+                    totalAmount += Number(item.price) * item.quantity;
+                });
+
+                // 총 금액 표시
+                totalAmountDiv.innerHTML = `총 금액: ₩${totalAmount.toLocaleString()}`;
+                totalAmountDiv.style.display = 'block';
+            } catch (error) {
+                console.error('장바구니 불러오기 실패:', error);
+                emptyMsg.innerText = '장바구니를 불러오는데 실패했습니다.';
+                emptyMsg.style.display = 'block';
+            }
+        }
+
+        // 이벤트 리스너 설정
+        document.getElementById('wishlist-items').addEventListener('click', async (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                const productId = e.target.getAttribute('data-product-id');
+                if (!confirm('정말 삭제하시겠습니까?')) return;
+                
+                try {
+                    const res = await fetch(`/furniture/shop/wishlist/${productId}`, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': csrfToken }
+                    });
+                    if (res.ok) {
+                        reloadWishlist();
+                    } else {
+                        alert('삭제에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('삭제 실패:', error);
+                    alert('삭제에 실패했습니다.');
+                }
+            }
+
+            if (e.target.classList.contains('qty-btn')) {
+                const productId = e.target.getAttribute('data-product-id');
+                const action = e.target.getAttribute('data-action');
+                
+                try {
+                    const res = await fetch(`/furniture/shop/wishlist/${productId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({ action })
+                    });
+                    if (res.ok) {
+                        reloadWishlist();
+                    } else {
+                        alert('수량 변경에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('수량 변경 실패:', error);
+                    alert('수량 변경에 실패했습니다.');
+                }
+            }
+        });
+
+        const modal = document.getElementById('orderDetailModal');
+
+        function openOrderModal(orderIndex) {
+            const order = orderHistory[orderIndex];
+            document.getElementById('modal-order-id').innerText = '주문번호: ' + order.id;
+            const date = new Date(order.created_at).toLocaleString('ko-KR');
+            document.getElementById('modal-order-date').innerText = '주문일시: ' + date;
+
+            document.getElementById('modal-recipient-info').innerText = `수령인: ${order.name} (${order.phone})`;
+            document.getElementById('modal-address-info').innerText = `주소: ${order.address} ${order.detail_address} (${order.postcode})`;
+            document.getElementById('modal-message').innerText = '요청사항: ' + (order.message || '없음');
+
+            const itemsContainer = document.getElementById('modal-order-items');
+            itemsContainer.innerHTML = '';
+            order.items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.style.display = 'flex';
+                itemDiv.style.alignItems = 'center';
+                itemDiv.style.marginBottom = '10px';
+                itemDiv.innerHTML = `
+                    <img src="${item.image_url}" style="width:60px; height:60px; margin-right:15px; border-radius:4px;">
+                    <div style="flex-grow:1;">
+                        <div>${item.model_name}</div>
+                        <div>수량: ${item.quantity}개</div>
+                    </div>
+                    <div style="font-weight:bold;">₩${Number(item.price).toLocaleString()}</div>
+                `;
+                itemsContainer.appendChild(itemDiv);
+            });
+
+            document.getElementById('modal-total-amount').innerText = '총 결제금액: ₩' + Number(order.total_amount).toLocaleString();
+
+            modal.style.display = 'block';
+        }
+
+        function closeOrderModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeOrderModal();
+            }
+        }
+
+        function showDetail(productId) {
+            // 상세보기 모달 또는 페이지 이동
+            window.location.href = '/furniture/shop/detail/' + productId;
+        }
+    </script>
+</div>

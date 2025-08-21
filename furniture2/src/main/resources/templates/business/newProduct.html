@@ -1,0 +1,67 @@
+<div id="wrapper" th:fragment="content">
+  <div class="container mt-5">
+    <h2 class="mb-4">상품 등록</h2>
+    <form th:action="@{/business/newProduct}" method="post" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="modelName" class="form-label">모델명</label>
+        <input type="text" class="form-control" id="modelName" name="modelName" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">간단한 설명</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="price" class="form-label">가격</label>
+        <input type="number" class="form-control" id="price" name="price" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">카테고리</label>
+        <select class="form-select" id="category" name="category">
+          <option value="bed">Bed</option>
+          <option value="chair">Chair</option>
+          <option value="sofa">Sofa</option>
+          <option value="table">Table</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="productImage" class="form-label">상품 이미지 파일</label>
+        <input type="file" class="form-control" id="productImage" name="productImage" accept="image/*" required>
+      </div>
+
+      <div class="mb-3">
+        <button type="button" class="btn btn-warning" onclick="analyzeImage()">색상 분석</button>
+        <div id="analysisResult" class="mt-2 text-muted"></div>
+      </div>
+      <input type="hidden" id="colorMatchResult" name="colorMatchResult">
+
+      <div class="mb-3">
+        <label for="detailDescription" class="form-label">상세 설명</label>
+        <textarea class="form-control" id="detailDescription" name="detailDescription" rows="5"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">치수 정보</label>
+        <div id="dimension-fields">
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" name="dimensions[0].keyName" placeholder="예: 너비">
+            <input type="text" class="form-control" name="dimensions[0].valueText" placeholder="예: 120cm">
+            <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">삭제</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline-primary" onclick="addDimensionField()">치수 추가</button>
+      </div>
+
+      <div class="mb-3">
+        <label for="dimensionImage" class="form-label">치수 이미지</label>
+        <input type="file" class="form-control" id="dimensionImage" name="dimensionImage" accept="image/*">
+        <small class="text-muted">치수 정보를 보여주는 이미지를 첨부해주세요.</small>
+      </div>
+
+      <button type="submit" class="btn btn-success">상품 등록</button>
+    </form>
+  </div>
+</div>
