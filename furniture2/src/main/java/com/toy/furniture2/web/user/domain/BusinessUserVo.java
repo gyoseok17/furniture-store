@@ -1,9 +1,6 @@
 package com.toy.furniture2.web.user.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -35,4 +32,12 @@ public class BusinessUserVo {
     @Column(name = "approved_yn")
     private String approvedYn;
 
+    // Company FK 추가
+    @Column(name = "company_id")
+    private Integer companyId;
+
+    // Company 엔티티와의 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", insertable = false, updatable = false)
+    private CompanyVo company;
 }
