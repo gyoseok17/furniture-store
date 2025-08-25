@@ -12,6 +12,6 @@ public class JooqConfig {
 
     @Bean
     public DSLContext dslContext(DataSource dataSource) {
-        return DSL.using(dataSource, org.jooq.SQLDialect.MARIADB);
+        return DSL.using(dataSource, org.jooq.SQLDialect.MYSQL);
     }
 }

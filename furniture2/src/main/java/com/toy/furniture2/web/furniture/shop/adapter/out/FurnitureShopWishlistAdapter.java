@@ -5,14 +5,14 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.example.jooq.generated.tables.records.UserWishlistRecord;
+import com.toy.furniture2.infrastructure.jooq.generated.tables.records.UserWishlistRecord;
 import com.toy.furniture2.web.furniture.shop.application.port.out.FurnitureShopWishlistPort;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
-import static com.example.jooq.generated.tables.UserWishlist.USER_WISHLIST;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.UserWishlist.USER_WISHLIST;
 
 @Repository
 @RequiredArgsConstructor

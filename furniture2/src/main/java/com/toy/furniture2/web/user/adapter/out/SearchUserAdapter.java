@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import com.toy.furniture2.web.user.domain.SearchUserDto;
 import com.toy.furniture2.web.user.application.port.out.SearchUserPort;
 
-import static com.example.jooq.generated.tables.User.USER;
-import static com.example.jooq.generated.tables.BusinessUser.BUSINESS_USER;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.User.USER;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.BusinessUser.BUSINESS_USER;
 
 @Repository
 @RequiredArgsConstructor

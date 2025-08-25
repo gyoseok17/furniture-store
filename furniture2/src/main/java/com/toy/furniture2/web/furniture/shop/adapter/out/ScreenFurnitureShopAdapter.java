@@ -11,7 +11,7 @@ import com.toy.furniture2.web.furniture.shop.domain.PreviewProductVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
 
 @Repository
 @RequiredArgsConstructor

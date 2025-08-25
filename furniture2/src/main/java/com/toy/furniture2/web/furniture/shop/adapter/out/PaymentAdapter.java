@@ -10,10 +10,10 @@ import com.toy.furniture2.web.furniture.shop.domain.PaymentRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
-import static com.example.jooq.generated.tables.UserWishlist.USER_WISHLIST;
-import static com.example.jooq.generated.tables.Orders.ORDERS;
-import static com.example.jooq.generated.tables.OrderItems.ORDER_ITEMS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.UserWishlist.USER_WISHLIST;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Orders.ORDERS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.OrderItems.ORDER_ITEMS;
 
 
 @Repository

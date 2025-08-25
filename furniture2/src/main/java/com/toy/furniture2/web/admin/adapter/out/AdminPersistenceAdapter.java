@@ -9,8 +9,8 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import static com.example.jooq.generated.tables.User.USER;
-import static com.example.jooq.generated.tables.BusinessUser.BUSINESS_USER;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.User.USER;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.BusinessUser.BUSINESS_USER;
 
 
 @Repository

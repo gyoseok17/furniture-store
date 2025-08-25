@@ -18,7 +18,7 @@ java {
     }
 }
 
-val jooqVersion = "3.19.22"
+val jooqVersion = "3.19.23"
 
 configurations {
     compileOnly {
@@ -50,12 +50,12 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+
+    runtimeOnly("mysql:mysql-connector-java:8.0.33")
+    jooqGenerator("mysql:mysql-connector-java:8.0.33")
 
     implementation("org.jooq:jooq:${jooqVersion}")
     jooqGenerator("org.jooq:jooq-codegen:$jooqVersion")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.3.1")
-    jooqGenerator("org.mariadb.jdbc:mariadb-java-client:3.3.1")
 
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -73,27 +73,27 @@ jooq {
             jooqConfiguration.apply {
                 logging = org.jooq.meta.jaxb.Logging.WARN
                 jdbc.apply {
-                    driver = "org.mariadb.jdbc.Driver"
-                    url = "jdbc:mariadb://localhost:3306/furniture"
+                    driver = "com.mysql.cj.jdbc.Driver"
+                    url = "jdbc:mysql://localhost:3306/furniture?serverTimezone=Asia/Seoul&useSSL=false"
                     user = "root"
-                    password = "3302"
+                    password = "1234"
                 }
                 generator.apply {
                     name = "org.jooq.codegen.DefaultGenerator"
                     strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
                     database.apply {
-                        name = "org.jooq.meta.mariadb.MariaDBDatabase"
+                        name = "org.jooq.meta.mysql.MySQLDatabase"
                         inputSchema = "furniture"
                         forcedTypes = listOf(
                             ForcedType().apply {
                                 name = "INSTANT"
-                                types = "timestamp|datetime"
-                                expression = ".*"
+                                includeTypes = "timestamp|datetime"
+                                includeExpression = ".*"
                             }
                         )
                     }
                     target.apply {
-                        packageName = "com.example.jooq.generated"
+                        packageName = "com.toy.furniture2.infrastructure.jooq.generated"
                         directory = "build/generated/jooq/main"
                     }
                 }

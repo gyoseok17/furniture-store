@@ -10,8 +10,8 @@ import org.jooq.DSLContext;
 import com.toy.furniture2.web.furniture.shop.application.port.out.SearchFurnitureShopPort;
 import org.springframework.stereotype.Repository;
 
-import static com.example.jooq.generated.tables.ProductDimensions.PRODUCT_DIMENSIONS;
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.ProductDimensions.PRODUCT_DIMENSIONS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
 
 import java.util.List;
 

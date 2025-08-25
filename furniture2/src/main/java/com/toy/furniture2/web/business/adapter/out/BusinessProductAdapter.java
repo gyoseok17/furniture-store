@@ -20,9 +20,9 @@ import com.toy.furniture2.web.business.application.port.out.BusinessProductPort;
 import com.toy.furniture2.web.common.domain.ProductDto;
 
 import lombok.RequiredArgsConstructor;
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
-import static com.example.jooq.generated.tables.BusinessUser.BUSINESS_USER;
-import static com.example.jooq.generated.tables.ProductDimensions.PRODUCT_DIMENSIONS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.BusinessUser.BUSINESS_USER;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.ProductDimensions.PRODUCT_DIMENSIONS;
 
 @Repository
 @RequiredArgsConstructor

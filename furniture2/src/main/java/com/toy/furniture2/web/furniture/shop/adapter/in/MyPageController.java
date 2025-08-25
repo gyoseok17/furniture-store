@@ -8,9 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
-import static com.example.jooq.generated.tables.Orders.ORDERS;
-import static com.example.jooq.generated.tables.OrderItems.ORDER_ITEMS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Orders.ORDERS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.OrderItems.ORDER_ITEMS;
 
 
 import java.util.List;

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.example.jooq.generated.Tables.PRODUCT_DIMENSIONS;
-import static com.example.jooq.generated.tables.Products.PRODUCTS;
+import static com.toy.furniture2.infrastructure.jooq.generated.Tables.PRODUCT_DIMENSIONS;
+import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
 
 @Repository
 @RequiredArgsConstructor

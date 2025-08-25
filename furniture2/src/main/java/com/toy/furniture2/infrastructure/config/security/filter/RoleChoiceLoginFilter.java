@@ -39,10 +39,28 @@ public class RoleChoiceLoginFilter  extends UsernamePasswordAuthenticationFilter
         String password = request.getParameter("pwd");
         String role = request.getParameter("role");
 
+        // 입력값 검증
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new CustomException("아이디를 입력해주세요.");
+        }
+        
+        if (password == null || password.trim().isEmpty()) {
+            throw new CustomException("비밀번호를 입력해주세요.");
+        }
+        
+        if (role == null || role.trim().isEmpty()) {
+            throw new CustomException("역할을 선택해주세요.");
+        }
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
 
         if (userDetails instanceof CustomUserDetails customUser) {
             SearchUserDto userDto = customUser.getSearchUserDto();
+            
+            // userDto가 null인 경우 체크
+            if (userDto == null) {
+                throw new CustomException("사용자 정보를 찾을 수 없습니다.");
+            }
 
             if (!userDto.getRole().equals(role) && !userDto.getRole().equals("ADMIN")) { //잘못된 역할로 로그인
                 throw new CustomException("선택한 역할이 올바르지 않습니다.");
