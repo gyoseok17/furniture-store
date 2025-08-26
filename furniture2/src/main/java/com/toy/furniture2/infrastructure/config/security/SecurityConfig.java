@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.toy.furniture2.infrastructure.config.security.filter.RoleChoiceLoginFilter;
-import com.toy.furniture2.web.user.application.port.in.ChangeUserUseCase;
+import com.toy.furniture2.web.member.application.port.in.ChangeUserUseCase;
 
 
 @Configuration

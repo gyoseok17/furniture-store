@@ -2,8 +2,9 @@ package com.toy.furniture2.web.admin.adapter.out;
 
 import com.toy.furniture2.web.admin.application.port.out.LoadAdminUserPort;
 import com.toy.furniture2.web.admin.application.port.out.UpdateAdminUserPort;
-import com.toy.furniture2.web.user.domain.SearchBusinessUserDto;
-import com.toy.furniture2.web.user.domain.SearchUserDto;
+import com.toy.furniture2.web.member.domain.SearchBusinessUserDto;
+import com.toy.furniture2.web.member.domain.SearchUserDto;
+
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.toy.furniture2.web.furniture.shop.application.port.in.PaymentUseCase;
 import com.toy.furniture2.web.furniture.shop.domain.PaymentRequestDto;
-import com.toy.furniture2.web.user.domain.CustomUserDetails;
+import com.toy.furniture2.web.member.domain.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

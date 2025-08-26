@@ -17,9 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
-import com.toy.furniture2.web.user.domain.CustomUserDetails;
-import com.toy.furniture2.web.user.domain.SearchUserDto;
-import com.toy.furniture2.web.user.application.port.in.ChangeUserUseCase;
+import com.toy.furniture2.web.member.application.port.in.ChangeUserUseCase;
+import com.toy.furniture2.web.member.domain.CustomUserDetails;
+import com.toy.furniture2.web.member.domain.SearchUserDto;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

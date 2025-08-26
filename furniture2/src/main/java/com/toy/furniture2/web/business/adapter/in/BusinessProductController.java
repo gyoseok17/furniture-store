@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.toy.furniture2.web.business.adapter.in.form.ProductForm;
 import com.toy.furniture2.web.business.application.port.in.BusinessProductUseCase;
 import com.toy.furniture2.web.common.domain.ProductDto;
-import com.toy.furniture2.web.user.domain.CustomUserDetails;
+import com.toy.furniture2.web.member.domain.CustomUserDetails;
 
 import lombok.RequiredArgsConstructor;
 

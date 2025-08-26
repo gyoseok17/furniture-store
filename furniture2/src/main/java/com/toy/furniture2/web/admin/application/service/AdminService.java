@@ -4,8 +4,9 @@ import com.toy.furniture2.web.admin.application.port.in.LoadUserListUseCase;
 import com.toy.furniture2.web.admin.application.port.in.ManageUserApprovalUseCase;
 import com.toy.furniture2.web.admin.application.port.out.LoadAdminUserPort;
 import com.toy.furniture2.web.admin.application.port.out.UpdateAdminUserPort;
-import com.toy.furniture2.web.user.domain.SearchBusinessUserDto;
-import com.toy.furniture2.web.user.domain.SearchUserDto;
+import com.toy.furniture2.web.member.domain.SearchBusinessUserDto;
+import com.toy.furniture2.web.member.domain.SearchUserDto;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

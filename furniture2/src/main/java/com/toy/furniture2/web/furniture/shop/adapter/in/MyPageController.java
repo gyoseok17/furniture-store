@@ -1,12 +1,13 @@
 package com.toy.furniture2.web.furniture.shop.adapter.in;
 
-import com.toy.furniture2.web.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.toy.furniture2.web.member.domain.CustomUserDetails;
 
 import static com.toy.furniture2.infrastructure.jooq.generated.tables.Products.PRODUCTS;
 import static com.toy.furniture2.infrastructure.jooq.generated.tables.Orders.ORDERS;

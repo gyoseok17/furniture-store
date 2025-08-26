@@ -13,7 +13,4 @@ public class ProductDto {
     private String imageUrl;
     private String category;
     private String businessNumber;
-    
-    // Company FK 추가
-    private Integer companyId;
 }
