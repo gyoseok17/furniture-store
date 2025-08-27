@@ -7,19 +7,19 @@
 
 ### 설명
 - **아키텍처 설계**: Port-Adapter로 컨트롤러/유즈케이스/어댑터 분리, 테스트·교체 용이
-- **데이터 접근**: JPA(단순 CRUD) + JOOQ(복잡 조인·동적 조건·집계) 병행
-- **보안/인증**: Spring Security 커스텀 로그인 필터(역할 선택, 잠금/휴면 처리, 쿠키 저장)
+- **데이터 접근**: JPA(단순 CRUD) + JOOQ(그 외 복잡한 쿼리) 병행
+- **보안/인증**: Spring Security 커스텀 로그인 필터(회원 구분, 잠금/휴면 처리, 쿠키 저장)
 - **화면/레이아웃**: Thymeleaf 레이아웃 구성, Devtools LiveReload
 - **DB/조회**: JOOQ 코드 생성 테이블 기반 타입 안전 쿼리
 
 ### 핵심 기술 스택
 - **Backend**: Spring Boot 3, Java 21
 - **ORM/SQL**: Spring Data JPA, JOOQ 3.19
-- **DB**: MariaDB
-- **View**: Thymeleaf, Vanilla JS/CSS
+- **DB**: MySQL
+- **View**: Thymeleaf, JS/CSS
 - **Security**: Spring Security(커스텀 필터)
 
 ### 아키텍처 요약
-- **회원 흐름**: 가입(일반/사업자) → 관리자 승인(사업자) → 로그인(역할 선택) → 세션/권한 부여
+- **회원 흐름**: 가입(일반/사업자) → 관리자 승인(사업자) → 로그인(회원 구분) → 세션/권한 부여
 - **쇼핑 흐름**: 카테고리별 목록(JOOQ) → 위시리스트 담기/조회 → 결제 요청 흐름
 - **관리 흐름**: 회원 리스트 조회(JOOQ) → 사업자 승인/거절(상태 업데이트)
